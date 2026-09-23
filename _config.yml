@@ -1,0 +1,16 @@
+title: napla-dev
+description: Football analytics notes — tracking data, defence, and honest validation.
+author: napla-dev
+url: "https://napla-dev.github.io"
+baseurl: ""
+permalink: /:year/:month/:title/
+markdown: kramdown
+kramdown:
+  input: kramdown
+  math_engine: mathjax
+  syntax_highlighter: rouge
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+exclude:
+  - README.md

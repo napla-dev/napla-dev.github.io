@@ -1,0 +1,14 @@
+---
+layout: default
+title: Posts
+---
+<p class="intro">{{ site.description }}</p>
+<ul class="post-list">
+  {% for post in site.posts %}
+  <li>
+    <span class="meta">{{ post.date | date: "%-d %b %Y" }}</span>
+    <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+    {% if post.subtitle %}<p class="subtitle">{{ post.subtitle }}</p>{% endif %}
+  </li>
+  {% endfor %}
+</ul>
