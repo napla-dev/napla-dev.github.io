@@ -18,7 +18,7 @@ image: /assets/img/marking/fig_null_result_contrast.png
 
 You have seen it. An attacker is about to shoot, and the defender standing next to him is watching somebody else.
 
-Football analytics can tell us who controls which part of the pitch (pitch control) and how valuable each attacker's position is (OBSO). It is much worse at the version of the question coaches actually ask: **who is marking whom, and what does it cost when nobody is?** This post builds a model for that, checks whether it measures what it claims to, and then tries to use it.
+Football analytics can tell us who controls which part of the pitch (pitch control) and how valuable each attacker's position is (OBSO). It is less developed on a question coaches often ask: **who is marking whom, and what does it cost when nobody is?** This post builds a model for that, checks whether it measures what it claims to, and then tries to use it.
 
 ## 2. The model
 
@@ -49,7 +49,7 @@ Before using the model, I checked it against an independent source. PFF's analys
   <figcaption>Figure 1. How often each rule names the same defender as PFF's analysts. Right: the 14.5% of cases where the model and the nearest-defender rule disagree. Match-level bootstrap 95% CIs. Shown for the original model; without the turn penalty (Section 3) the match rate is 68.8%.</figcaption>
 </figure>
 
-When the model and the nearest-defender rule pick different defenders, the analysts side with the model 43% of the time and with the nearest defender 31% (p < 0.0001). The model is seeing which of two nearby defenders is actually going to arrive, not just which one is closer.
+When the model and the nearest-defender rule pick different defenders, the analysts side with the model 43% of the time and with the nearest defender 31% (p < 0.0001). This suggests the model picks up which of two nearby defenders is moving to engage, not just which one is closer.
 
 This check also removed a component. My first version, following Bekkers, added a penalty for defenders running the wrong way. Against the human labels it made both coverage and attribution slightly *worse*, so I dropped it. I re-checked the results below without it on a subset of matches, and none of the conclusions change.
 
@@ -61,7 +61,7 @@ $$
 U(t) = \sum_j V_j \,(1 - P_j)
 $$
 
-If coverage carries information, $$U$$ should predict the next few seconds' shots better than raw threat $$\sum_j V_j$$ with no coverage at all. **It doesn't.** Raw threat wins at every horizon (rank correlation with xG in the next 3 seconds: 0.174 against 0.163), and changing how $$U$$ is aggregated doesn't help.
+If coverage carries information, $$U$$ should predict the next few seconds' shots better than raw threat $$\sum_j V_j$$ with no coverage at all. In this data, it didn't. Raw threat did slightly better at every horizon I tested (rank correlation with xG in the next 3 seconds: 0.174 against 0.163), and changing how $$U$$ is aggregated doesn't help.
 
 <figure>
   <img src="{{ '/assets/img/marking/fig_pj_distribution.png' | relative_url }}" alt="Histogram of coverage probability on a log scale, with most mass near zero and a second hump near one">
@@ -71,7 +71,7 @@ If coverage carries information, $$U$$ should predict the next few seconds' shot
 There are two reasons.
 
 - **Most attackers are uncovered most of the time.** The median coverage is 0.09, so the discount $$(1 - P_j)$$ is close to 1 almost everywhere, and $$U$$ is nearly raw threat.
-- **Coverage follows danger.** Defenders converge where danger already is, so heavily covered threat goes with *more* xG conceded, not less. This is the classic difficulty of measuring defence from observational data, and no better threat model fixes it.
+- **Coverage follows danger.** Defenders converge where danger already is, so heavily covered threat goes with *more* xG conceded, not less. This looks like the familiar difficulty of measuring defence from observational data, and I don't expect a better threat model alone to remove it.
 
 ## 5. Use two: does escaping your marker bring the ball?
 
@@ -83,20 +83,20 @@ I compared them with moments where the same player, in the same match, was cover
 |---|---|---|
 | Received a pass within 5 s | 8.6% | 8.2% (p = 0.83) |
 
-**No.** An attacker who has just escaped their marker is as likely to receive the ball as one who is still being marked. The result survives every check I could think of: the separation is real movement rather than a model artefact, passes aren't missing from the data, the ball isn't simply moving away, and wider outcomes (receiving after several passes, the ball getting closer, possession surviving) are equally flat.
+Not measurably. An attacker who had just escaped their marker received the ball about as often as one who was still being marked. The result held up under the checks I ran: the separation is real movement rather than a model artefact, passes aren't missing from the data, the ball isn't simply moving away, and wider outcomes (receiving after several passes, the ball getting closer, possession surviving) are equally flat.
 
 <figure>
   <img src="{{ '/assets/img/marking/fig_null_result_contrast.png' | relative_url }}" alt="Left: four outcome rates with overlapping confidence intervals for escapes and controls. Right: distance-to-goal distributions, with escapes further from goal">
   <figcaption>Figure 3. Left: what happens next is indistinguishable between escapes and controls. Right: where it happens is not.</figcaption>
 </figure>
 
-The one difference is *where* it happens. Escapes occur a median 25.6 m from goal against 20.0 m for controls, and only 11% happen inside the penalty area against 29% for controls. **Where getting free would matter, it doesn't happen. Where it happens, it doesn't matter.**
+The one difference is *where* it happens. Escapes occur a median 25.6 m from goal against 20.0 m for controls, and only 11% happen inside the penalty area against 29% for controls. In other words, escapes mostly happen in areas where being free is less valuable, which may explain why they don't lead to the ball.
 
 ## 6. What I take from this
 
-- **Validate the measuring instrument before using it.** Checking the model against human labels told me which parts worked (attribution), which part to remove (the turn penalty), and that the failures in Sections 4 and 5 are about football, not a broken model.
-- **Being free and being available are different things.** Off-ball metrics often assume an unmarked attacker is a dangerous one. In this data, that assumption didn't hold.
-- **Simple baselines are hard to beat.** Distance alone matches the model on "is he pressured?". The model only earns its keep on the harder question of *who* is doing the pressing.
+- **Validate the measuring instrument before using it.** Checking the model against human labels told me which parts worked (attribution), which part to remove (the turn penalty), and that the negative results in Sections 4 and 5 are unlikely to be caused by a broken model.
+- **Being free and being available are different things.** It is tempting to treat an unmarked attacker as a dangerous one. In this tournament, getting free on its own was not followed by more involvement.
+- **Simple baselines are hard to beat.** Distance alone matches the model on "is he pressured?". Where the model adds something is the harder question of *who* is doing the pressing.
 
 **Limits.** This is one tournament: 49 matches, three to seven per player, so I don't publish player rankings. The tracking data has no body orientation, and PFF's pressure label is a human judgement that may itself lean on distance.
 
