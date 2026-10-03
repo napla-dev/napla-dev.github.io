@@ -22,19 +22,51 @@ Football analytics can tell us who controls which part of the pitch (pitch contr
 
 ## 2. The model
 
-For every attacker $$j$$ in every frame, I estimate how long each defender $$i$$ would need to reach the spot where the attacker is heading. Both players are projected forward by their current velocity, and the defender gets a reaction time:
+The model has three steps: how long each defender needs to reach an attacker, how likely that makes each defender to cover him, and how well the team covers him overall.
+
+**Step 1: time to arrive.** For every attacker $$j$$ in every frame, I estimate how long each defender $$i$$ would need to reach the spot where the attacker is heading:
 
 $$
 T_{ij} = \tau_r + \frac{\lVert (\mathbf r_j + \mathbf v_j \Delta) - (\mathbf r_i + \mathbf v_i \tau_r) \rVert}{v_{\max}}
 $$
 
-A defender who can arrive well within 1.5 s covers the attacker; one who can't, doesn't. A logistic curve turns that time into a probability $$p_{ij}$$, and the team's coverage of the attacker is the probability that *not every* defender fails:
+- $$\mathbf r_i, \mathbf v_i$$ and $$\mathbf r_j, \mathbf v_j$$: the current positions and velocities of defender $$i$$ and attacker $$j$$, from the tracking data.
+- $$\mathbf r_j + \mathbf v_j \Delta$$: where the attacker will be in $$\Delta = 1$$ s if he keeps moving the same way.
+- $$\tau_r = 0.7$$ s: the defender's reaction time. During it he keeps drifting in his current direction, so his starting point is $$\mathbf r_i + \mathbf v_i \tau_r$$.
+- $$\lVert \cdot \rVert$$: the straight-line distance between those two points, and $$v_{\max} = 5$$ m/s: the defender's top running speed.
+
+So $$T_{ij}$$ is "reaction time plus the time to run the remaining distance at full speed".
+
+**Step 2: one defender's coverage.** A defender who can arrive well within $$T = 1.5$$ s covers the attacker; one who can't, doesn't. A logistic curve turns the gap between the two into a probability:
+
+$$
+p_{ij} = \frac{1}{1 + \exp\!\left( -\dfrac{\pi}{\sqrt{3}\,\sigma}\,(T - T_{ij}) \right)}
+$$
+
+- $$p_{ij}$$: the probability that defender $$i$$ alone covers attacker $$j$$.
+- $$T - T_{ij}$$: how much time the defender has to spare. Positive means he gets there in time; negative means he doesn't.
+- $$\sigma = 0.45$$ s: how gradual the curve is. With exactly no time to spare, $$p_{ij} = 0.5$$; a few tenths of a second either way moves it towards 0 or 1.
+
+**Step 3: the team's coverage.** The attacker is covered if *at least one* defender covers him, which is one minus the probability that every defender fails:
 
 $$
 P_j = 1 - \prod_{i} (1 - p_{ij})
 $$
 
-This builds on Spearman's pitch-control physics and Joris Bekkers' Pressing Intensity, adapted from pressing to marking. One more quantity matters later: a defender's **marginal contribution**, $$m_{ij}$$, is how much $$P_j$$ falls if you remove that defender. The defender with the largest $$m_{ij}$$ is the model's answer to "who is marking this attacker?"
+- $$P_j$$: the team's coverage of attacker $$j$$, between 0 and 1.
+- $$\prod_i (1 - p_{ij})$$: the probability that every defender fails, assuming they fail independently. Outfield players only; goalkeepers are excluded.
+
+This builds on Spearman's pitch-control physics and Joris Bekkers' Pressing Intensity, adapted from pressing to marking.
+
+**Who is marking whom.** One more quantity matters later. A defender's **marginal contribution** is how much the team's coverage falls if you remove him:
+
+$$
+m_{ij} = P_j - P_j^{(-i)}
+$$
+
+- $$P_j^{(-i)}$$: the coverage of attacker $$j$$ recalculated without defender $$i$$.
+
+The defender with the largest $$m_{ij}$$ is the model's answer to "who is marking this attacker?". It is usually, but not always, the nearest defender.
 
 ## 3. Does it measure what it claims?
 
