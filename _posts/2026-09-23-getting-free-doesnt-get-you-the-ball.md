@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "Getting Free Doesn't Get You the Ball"
-subtitle: "Building a man-marking model from tracking data, checking it against human analysts, and finding out what it can and can't do"
-description: "A coverage model built on PFF FC's 2022 World Cup tracking data, validated against human-coded pressure labels, then put to three uses. One works; two don't, for instructive reasons."
+title: "xMark: Measuring Who Marks Whom"
+subtitle: "Building a marking model from tracking data, checking it against human analysts, and finding out that getting free doesn't get you the ball"
+description: "xMark, a marking model built on PFF FC's 2022 World Cup tracking data, validated against human-coded pressure labels, then put to three uses. One works; two don't, for instructive reasons."
 math: true
 image: /assets/img/marking/fig_null_result_contrast.png
 ---
@@ -10,9 +10,9 @@ image: /assets/img/marking/fig_null_result_contrast.png
 *49 World Cup matches · 1.02 million frames · updated 2 October 2026*
 
 > **TL;DR**
-> - I built a model of which attacker each defender is covering, from PFF FC's open 2022 World Cup tracking data.
+> - I built a model of which attacker each defender is covering, which I call **xMark**, from PFF FC's open 2022 World Cup tracking data.
 > - Checked against PFF's human-coded pressure labels, the model agrees with the analysts, and it names the defender who actually pressed the receiver better than a "nearest defender" rule does.
-> - But coverage turned out to be a poor input for predicting danger. And an attacker who escapes their marker is **no more likely to receive the ball** than one who is still marked.
+> - But xMark turned out to be a poor input for predicting danger. And an attacker who escapes their marker is **no more likely to receive the ball** than one who is still marked.
 
 ## 1. The question
 
@@ -47,24 +47,24 @@ $$
 - $$T - T_{ij}$$: how much time the defender has to spare. Positive means he gets there in time; negative means he doesn't.
 - $$\sigma = 0.45$$ s: how gradual the curve is. With exactly no time to spare, $$p_{ij} = 0.5$$; a few tenths of a second either way moves it towards 0 or 1.
 
-**Step 3: the team's coverage.** The attacker is covered if *at least one* defender covers him, which is one minus the probability that every defender fails:
+**Step 3: the team's coverage, xMark.** The attacker is covered if *at least one* defender covers him, which is one minus the probability that every defender fails:
 
 $$
 P_j = 1 - \prod_{i} (1 - p_{ij})
 $$
 
-- $$P_j$$: the team's coverage of attacker $$j$$, between 0 and 1.
+- $$P_j$$: **xMark**, the team's coverage of attacker $$j$$, between 0 and 1. Despite the name, it measures whether a defender *can reach* the attacker in time, not whether he is actually marking him.
 - $$\prod_i (1 - p_{ij})$$: the probability that every defender fails, assuming they fail independently. Outfield players only; goalkeepers are excluded.
 
-This builds on Spearman's pitch-control physics and Joris Bekkers' Pressing Intensity, adapted from pressing to marking.
+Steps 1 to 3 are not new. They follow Joris Bekkers' Pressing Intensity (2025), which applies Spearman's pitch-control physics to pressure, and the parameters $$T$$ and $$\sigma$$ are his. The name xMark refers to how I use it: as a measure of marking, broken down by defender (below) and checked against human labels (Section 3).
 
-**Who is marking whom.** One more quantity matters later. A defender's **marginal contribution** is how much the team's coverage falls if you remove him:
+**Who is marking whom.** One more quantity matters later. A defender's **marker contribution** is how much xMark falls if you remove him:
 
 $$
 m_{ij} = P_j - P_j^{(-i)}
 $$
 
-- $$P_j^{(-i)}$$: the coverage of attacker $$j$$ recalculated without defender $$i$$.
+- $$P_j^{(-i)}$$: xMark of attacker $$j$$ recalculated without defender $$i$$.
 
 The defender with the largest $$m_{ij}$$ is the model's answer to "who is marking this attacker?". It is usually, but not always, the nearest defender.
 
@@ -72,18 +72,18 @@ The defender with the largest $$m_{ij}$$ is the model's answer to "who is markin
 
 Before using the model, I checked it against an independent source. PFF's analysts record, for every first touch, whether the receiver was under pressure and which defender applied it. I compared the model's view a fraction of a second before the ball arrived with the analysts' label.
 
-**Coverage agrees with the analysts.** Across 40,388 receptions, $$P_j$$ predicts whether the receiver was pressured with an AUC of **0.83**. A plain "distance to the nearest defender" does about as well (0.83), so for this simple yes-or-no question the physics adds little.
+**xMark agrees with the analysts.** Across 40,388 receptions, $$P_j$$ predicts whether the receiver was pressured with an AUC of **0.83**. A plain "distance to the nearest defender" does about as well (0.83), so for this simple yes-or-no question the physics adds little.
 
 **The model is better at saying *who*.** For the 7,187 receptions where the analysts named the defender who applied pressure:
 
 <figure>
-  <img src="{{ '/assets/img/coverage/fig_attribution.png' | relative_url }}" alt="Left: the marginal-contribution pick matches the labelled presser 68.3% of the time against 66.6% for the nearest defender. Right: when the two disagree, the label sides with the marginal pick 42.6% of the time, the nearest defender 30.9%, neither 26.5%">
+  <img src="{{ '/assets/img/coverage/fig_attribution.png' | relative_url }}" alt="Left: the marker-contribution pick matches the labelled presser 68.3% of the time against 66.6% for the nearest defender. Right: when the two disagree, the label sides with the marker-contribution pick 42.6% of the time, the nearest defender 30.9%, neither 26.5%">
   <figcaption>Figure 1. How often each rule names the same defender as PFF's analysts. Right: the 14.5% of cases where the model and the nearest-defender rule disagree. Match-level bootstrap 95% CIs. Shown for the original model; without the turn penalty (Section 3) the match rate is 68.8%.</figcaption>
 </figure>
 
 When the model and the nearest-defender rule pick different defenders, the analysts side with the model 43% of the time and with the nearest defender 31% (p < 0.0001). This suggests the model picks up which of two nearby defenders is moving to engage, not just which one is closer.
 
-This check also removed a component. My first version, following Bekkers, added a penalty for defenders running the wrong way. Against the human labels it made both coverage and attribution slightly *worse*, so I dropped it. I re-checked the results below without it on a subset of matches, and none of the conclusions change.
+This check also removed a component. My first version, following Bekkers, added a penalty for defenders running the wrong way. Against the human labels it made both xMark and attribution slightly *worse*, so I dropped it. I re-checked the results below without it on a subset of matches, and none of the conclusions change.
 
 ## 4. Use one: is uncovered threat more dangerous?
 
@@ -93,21 +93,21 @@ $$
 U(t) = \sum_j V_j \,(1 - P_j)
 $$
 
-If coverage carries information, $$U$$ should predict the next few seconds' shots better than raw threat $$\sum_j V_j$$ with no coverage at all. In this data, it didn't. Raw threat did slightly better at every horizon I tested (rank correlation with xG in the next 3 seconds: 0.174 against 0.163), and changing how $$U$$ is aggregated doesn't help.
+If xMark carries information, $$U$$ should predict the next few seconds' shots better than raw threat $$\sum_j V_j$$ with no xMark discount at all. In this data, it didn't. Raw threat did slightly better at every horizon I tested (rank correlation with xG in the next 3 seconds: 0.174 against 0.163), and changing how $$U$$ is aggregated doesn't help.
 
 <figure>
-  <img src="{{ '/assets/img/marking/fig_pj_distribution.png' | relative_url }}" alt="Histogram of coverage probability on a log scale, with most mass near zero and a second hump near one">
-  <figcaption>Figure 2. Coverage across 9.2 million attacker-frames (log scale). Nearly half sit below 0.05.</figcaption>
+  <img src="{{ '/assets/img/marking/fig_pj_distribution.png' | relative_url }}" alt="Histogram of xMark on a log scale, with most mass near zero and a second hump near one">
+  <figcaption>Figure 2. xMark across 9.2 million attacker-frames (log scale). Nearly half sit below 0.05.</figcaption>
 </figure>
 
 There are two reasons.
 
-- **Most attackers are uncovered most of the time.** The median coverage is 0.09, so the discount $$(1 - P_j)$$ is close to 1 almost everywhere, and $$U$$ is nearly raw threat.
-- **Coverage follows danger.** Defenders converge where danger already is, so heavily covered threat goes with *more* xG conceded, not less. This looks like the familiar difficulty of measuring defence from observational data, and I don't expect a better threat model alone to remove it.
+- **Most attackers are uncovered most of the time.** The median xMark is 0.09, so the discount $$(1 - P_j)$$ is close to 1 almost everywhere, and $$U$$ is nearly raw threat.
+- **xMark follows danger.** Defenders converge where danger already is, so heavily covered threat goes with *more* xG conceded, not less. This looks like the familiar difficulty of measuring defence from observational data, and I don't expect a better threat model alone to remove it.
 
 ## 5. Use two: does escaping your marker bring the ball?
 
-If coverage can't predict danger, maybe a *change* in coverage can. I detected moments when a covered attacker suddenly became free: coverage above 0.6 for half a second, collapsing below 0.2 within 0.7 s, and staying there. That gave 559 escapes I could line up with event data.
+If xMark can't predict danger, maybe a *change* in xMark can. I detected moments when a covered attacker suddenly became free: xMark above 0.6 for half a second, collapsing below 0.2 within 0.7 s, and staying there. That gave 559 escapes I could line up with event data.
 
 I compared them with moments where the same player, in the same match, was covered just as tightly but did *not* escape. Did the ball come?
 
@@ -132,7 +132,7 @@ The one difference is *where* it happens. Escapes occur a median 25.6 m from goa
 
 **Limits.** This is one tournament: 49 matches, three to seven per player, so I don't publish player rankings. The tracking data has no body orientation, and PFF's pressure label is a human judgement that may itself lean on distance.
 
-**Follow-up.** Coverage turned out to be a poor predictor, but it is good at something else: showing *who* is marking *whom*. In [Six Runs and a Blind Spot]({{ '/2026/10/six-runs-and-a-blind-spot/' | relative_url }}) I use the same model to describe off-ball runs: which defender moved, and who that freed.
+**Follow-up.** xMark turned out to be a poor predictor, but it is good at something else: showing *who* is marking *whom*. In [Six Runs and a Blind Spot]({{ '/2026/10/six-runs-and-a-blind-spot/' | relative_url }}) I use the same model to describe off-ball runs: which defender moved, and who that freed.
 
 ## Data and references
 
