@@ -1,6 +1,9 @@
 title: napla-dev
 description: Football analytics notes — tracking data, defence, and honest validation.
 author: napla-dev
+twitter:
+  username: napladev
+  card: summary_large_image
 url: "https://napla-dev.github.io"
 baseurl: ""
 permalink: /:year/:month/:title/

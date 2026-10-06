@@ -4,6 +4,7 @@ title: "Six Runs and a Blind Spot: Off-Ball Movement Through xMark"
 subtitle: "What a marking model shows about off-ball runs, and what it misses"
 description: "Using xMark, a tracking-data marking model, and pitch control to look at six off-ball runs from the 2022 World Cup: three that pull defenders away from a teammate, two that shake off a marker, and one the model can't see."
 math: true
+image: /assets/img/offball/card_fra-pol.png
 ---
 
 *Six scenes · 49 World Cup matches · PFF FC open tracking data*
