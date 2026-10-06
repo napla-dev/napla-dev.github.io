@@ -132,6 +132,8 @@ The one difference is *where* it happens. Escapes occur a median 25.6 m from goa
 
 **Limits.** This is one tournament: 49 matches, three to seven per player, so I don't publish player rankings. The tracking data has no body orientation, and PFF's pressure label is a human judgement that may itself lean on distance.
 
+**Follow-up.** Coverage turned out to be a poor predictor, but it is good at something else: showing *who* is marking *whom*. In [Six Runs and a Blind Spot]({{ '/2026/10/six-runs-and-a-blind-spot/' | relative_url }}) I use the same model to describe off-ball runs: which defender moved, and who that freed.
+
 ## Data and references
 
 Tracking and events: PFF FC open 2022 World Cup data. xG: logistic regression on StatsBomb open data. All confidence intervals are match-level bootstrap.
