@@ -11,14 +11,14 @@ thumbnail: /assets/img/reception/fig_loss_decomposition.png
 *52,073 passes · 49 World Cup matches · PFF FC open tracking data*
 
 > **TL;DR**
-> - A pass that arrives is not always a pass that keeps the ball. I model the two steps separately: the probability that a pass **reaches** its receiver, and the probability that the receiver then **keeps** it.
+> - I model the two steps separately: the probability that a pass **reaches** its receiver, and the probability that the receiver then **keeps** it.
 > - Multiplying the two (I call it xSP, expected safe pass) splits each lost ball into "lost before reaching" and "lost after reaching". For short and medium ground passes, roughly a third of expected losses come after the ball has arrived.
 > - As a pure predictor, the split doesn't win: a model trained directly on "still in possession 3 seconds later" is more accurate. Its value is in showing *where* the ball is lost, not in predicting it better.
 > - Receptions that are already a duel when the ball arrives are lost about half the time within 3 seconds, and my model can't predict which ones.
 
 ## 1. The question
 
-Pass models usually measure success at one moment: did the ball reach a teammate? But anyone who watches football has seen a "completed" pass arrive with a defender on the receiver's back and the ball gone a second later.
+Pass models usually measure success at one moment: did the ball reach a teammate? But a "completed" pass can arrive with a defender on the receiver's back, and the ball can be gone a second later.
 
 I wanted to measure that second step. Given that a pass arrives, how likely is the receiver to keep the ball, and what does the situation at the moment of the pass tell us about it?
 
@@ -90,11 +90,11 @@ Some receptions are already a duel when the ball arrives: 1,655 in this data. A 
 
 The model can't tell which. Its AUC on these receptions is 0.51, no better than chance, compared with 0.84 on ordinary receptions. These duels are also where you would expect keeping the ball to matter most, for long balls and crosses in particular. The likely reason is that the tracking data has positions and speeds but not body shape, arm contact or timing of the jump, which is what decides a contested ball.
 
-## 7. What I take from this
+## 7. Summary
 
-- **Separate "arrives" from "kept".** Even when it doesn't improve prediction, the split changes the picture: for short passes, a sizeable share of the risk sits after the ball arrives.
-- **Compare against a direct model.** A decomposed metric should be checked against the simplest model of the same outcome. Here it lost, and that changed what I can honestly claim for it.
-- **Know what the data can't see.** Contested receptions are frequent, costly, and invisible to position-and-speed features.
+- **The split.** Even when it doesn't improve prediction, the split changes the picture: for short passes, a sizeable share of the risk sits after the ball arrives.
+- **Comparison with a direct model.** A decomposed metric should be checked against the simplest model of the same outcome. Here it lost, and that limits what I can claim for it.
+- **Contested receptions.** They are frequent, costly, and invisible to position-and-speed features.
 
 **Limits.** One tournament, 49 matches with tracking. The receiver's body orientation is only approximated, and agrees moderately with PFF's own labels (κ = 0.40). I don't report player rankings.
 

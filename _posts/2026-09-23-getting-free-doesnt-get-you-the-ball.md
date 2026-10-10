@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "xMark: Measuring Who Marks Whom"
-subtitle: "Building a marking model from tracking data, checking it against human analysts, and finding out that getting free doesn't get you the ball"
+subtitle: "Building a marking model from tracking data, checking it against human analysts, and testing whether getting free brings the ball"
 description: "xMark, a marking model built on PFF FC's 2022 World Cup tracking data, validated against human-coded pressure labels, then put to three uses. One works; two don't, for instructive reasons."
 math: true
 image: /assets/img/marking/fig_null_result_contrast.png
@@ -16,8 +16,6 @@ thumbnail: /assets/img/marking/fig_null_result_contrast.png
 > - But xMark turned out to be a poor input for predicting danger. And an attacker who escapes their marker is **no more likely to receive the ball** than one who is still marked.
 
 ## 1. The question
-
-You have seen it. An attacker is about to shoot, and the defender standing next to him is watching somebody else.
 
 Football analytics can tell us who controls which part of the pitch (pitch control) and how valuable each attacker's position is (OBSO). It is less developed on a question coaches often ask: **who is marking whom, and what does it cost when nobody is?** This post builds a model for that, checks whether it measures what it claims to, and then tries to use it.
 
@@ -125,11 +123,11 @@ Not measurably. An attacker who had just escaped their marker received the ball 
 
 The one difference is *where* it happens. Escapes occur a median 25.6 m from goal against 20.0 m for controls, and only 11% happen inside the penalty area against 29% for controls. In other words, escapes mostly happen in areas where being free is less valuable, which may explain why they don't lead to the ball.
 
-## 6. What I take from this
+## 6. Summary
 
-- **Validate the measuring instrument before using it.** Checking the model against human labels told me which parts worked (attribution), which part to remove (the turn penalty), and that the negative results in Sections 4 and 5 are unlikely to be caused by a broken model.
-- **Being free and being available are different things.** It is tempting to treat an unmarked attacker as a dangerous one. In this tournament, getting free on its own was not followed by more involvement.
-- **Simple baselines are hard to beat.** Distance alone matches the model on "is he pressured?". Where the model adds something is the harder question of *who* is doing the pressing.
+- **Validation.** Checking the model against human labels told me which parts worked (attribution), which part to remove (the turn penalty), and that the negative results in Sections 4 and 5 are unlikely to be caused by a broken model.
+- **Getting free.** It is tempting to treat an unmarked attacker as a dangerous one. In this tournament, getting free on its own was not followed by more involvement.
+- **Baselines.** Distance alone matches the model on "is he pressured?". Where the model adds something is the harder question of *who* is doing the pressing.
 
 **Limits.** This is one tournament: 49 matches, three to seven per player, so I don't publish player rankings. The tracking data has no body orientation, and PFF's pressure label is a human judgement that may itself lean on distance.
 

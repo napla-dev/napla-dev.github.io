@@ -45,7 +45,7 @@ That post found xMark to be a poor predictor of danger. Here I use it for someth
 
 ## 3. Pattern one: pulling a defender off a teammate
 
-The run that matters isn't always the one that gets the ball. In these three scenes, one attacker's run draws a defender away, and a teammate's xMark drops as a result.
+In these three scenes, one attacker's run draws a defender away, and a teammate's xMark drops as a result.
 
 ### Case 1: Two runners, one defender (France v Poland, 28:08)
 
@@ -55,7 +55,7 @@ The run that matters isn't always the one that gets the ball. In these three sce
 
 Giroud and Rabiot both run into the area Kamil Glik is defending. Just before the reference point, Glik's contribution to the two of them is almost equal (about 0.7 each): he is effectively responsible for both at once. The dashed lines cross 0.1 s before the reference point. From there he goes with Rabiot (contribution 0.11 → 0.84) and lets Giroud go (0.82 → 0.38). Giroud's xMark halves, from 0.80 to 0.40. Dembélé's cross finds Giroud, whose shot goes wide.
 
-Whether the two runs were planned together, the data can't say, but the result is the classic 2-v-1 on a centre-back: one defender, two attackers, and a choice he has to make.
+Whether the two runs were planned together, the data can't say, but the result is a 2-v-1 on a centre-back, who has to choose one of the two.
 
 ### Case 2: A diagonal run opens the space (Portugal v Switzerland, 34:55)
 
@@ -65,7 +65,7 @@ Whether the two runs were planned together, the data can't say, but the result i
 
 Guerreiro makes a diagonal run across the box. Granit Xhaka drifts towards it and stops covering Gonçalo Ramos (contribution 0.45 → 0.02). Ramos runs into the space, and his xMark falls from 0.94 to 0.08: the largest drop, weighted by how dangerous his position was, of any candidate I found. Félix's cross reaches him, but he is challenged and the ball goes out.
 
-Xhaka never fully picks up Guerreiro (his contribution to him only reaches 0.21). The run doesn't need to be marked to work; it only needs to make the defender move.
+Xhaka never fully picks up Guerreiro (his contribution to him only reaches 0.21), yet his movement is enough to free Ramos.
 
 ### Case 3: Attacking the box to free the striker (Croatia v Canada, 71:02)
 
@@ -103,7 +103,7 @@ Fabinho arrives from the second line. Collins Fai follows him at first, then los
   <video src="{{ '/assets/video/offball/06_USA-WAL.mp4' | relative_url }}" autoplay loop muted playsinline style="width:100%"></video>
 </figure>
 
-On video, this is a perfect run in behind: Weah gets goal-side of Neco Williams, Pulisic plays him through, and Weah scores first time.
+On video, this is a clean run in behind: Weah gets goal-side of Neco Williams, Pulisic plays him through, and Weah scores first time.
 
 The model sees something else. Weah's xMark falls from 0.96 to 0.58 by the time the pass is played and is still 0.57 when he receives it. When the pass is played, Williams is level with Weah; Weah is faster (7.5 against 6.7 m/s) and gets goal-side while the ball is rolling, so by the time he receives it Williams is about two metres behind, still chasing. The model asks only whether a defender *can reach* the attacker, not whether he is **goal-side** of him, and a defender that close still counts. (For this clip I keep computing Weah's xMark after he receives the ball; normally it stops.)
 
@@ -150,11 +150,11 @@ I didn't pick these by hand from memory. I searched all 49 matches for two patte
 
 Both patterns are followed by shots more often than a random moment, though this is an association, not proof that the run caused the shot. From the top candidates I watched the footage and kept the scenes where the run was clear on video and the numbers told the same story. I dropped scenes where the defender's contribution was too small (below about 0.2) to say that his movement freed anyone.
 
-## 8. What I take from this
+## 8. Summary
 
-- **xMark is a good way to describe a run, not to grade it.** It shows who was marking whom and when that changed, and puts numbers on something a broadcast clip shows only in part.
-- **The most useful part is the breakdown by defender.** Pitch control can tell you a space is open; marker contribution tells you which defender opened it.
-- **Being chased is not being marked.** Runs in behind, where the defender is beaten but close, are invisible to this family of models.
+- **Description, not evaluation.** xMark shows who was marking whom and when that changed, and puts numbers on something a broadcast clip shows only in part.
+- **Breakdown by defender.** Pitch control can tell you a space is open; marker contribution tells you which defender opened it.
+- **Runs in behind.** Runs where the defender is beaten but close are invisible to this family of models.
 
 **Limits.** These are six selected scenes, not a measurement of how good anyone's movement is. xMark has no body orientation. The pitch control model uses standard published parameters and was not tuned to this data.
 
