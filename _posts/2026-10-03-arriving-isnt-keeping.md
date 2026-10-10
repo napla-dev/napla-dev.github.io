@@ -63,32 +63,34 @@ $$
   <figcaption>Figure 1. Expected losses split into "before reaching" (blue) and "after reaching" (orange), with the observed rate of losing the ball within 5 seconds as dots. Crosses sit well above their dot because the model counts every cross that misses its target as a loss, while the 5-second outcome does not (a blocked cross that goes out for a corner keeps possession).</figcaption>
 </figure>
 
+**For short and medium ground passes, roughly a third or more of expected losses come after the ball has arrived.**
+
 Three things stand out:
 
-- **Long, lofted passes and crosses are lost mostly before they arrive.** The blue part dominates.
-- **Short and medium ground passes are different.** They rarely fail to arrive, so the part lost after reaching is roughly a third or more of their expected losses.
-- **In the final third, losses after reaching grow too.** The ball arrives in tighter spaces, and keeping it gets harder.
+- Long, lofted passes and crosses are lost mostly before they arrive. The blue part dominates.
+- Short and medium ground passes are different. They rarely fail to arrive.
+- In the final third, losses after reaching grow too. The ball arrives in tighter spaces, and keeping it gets harder.
 
 For most groups, the model's total sits close to the observed rate. Long passes, lofted passes and set pieces are overestimated by a few points, and crosses by much more, for the reason given in the caption.
 
 ## 5. Does the split predict better?
 
-I compared three ways of predicting whether the team still has the ball 3 or 5 seconds after the pass: xPass alone, xSP, and a model trained directly on that outcome using the same features.
+**A model trained directly on the outcome predicts better than the split (+0.018 AUC over xSP at 3 seconds); the split's value is in explaining where the ball is lost, not in predicting it.** I compared three ways of predicting whether the team still has the ball 3 or 5 seconds after the pass: xPass alone, xSP, and a model trained directly on that outcome using the same features.
 
 <figure>
   <img src="{{ '/assets/img/reception/fig_auc_comparison.png' | relative_url }}" alt="AUC with confidence intervals for xPass, xSP and a direct model at 3 and 5 seconds; the direct model is highest">
   <figcaption>Figure 2. AUC for predicting possession 3 and 5 seconds after the pass. The intervals for xPass and xSP overlap, but in a paired comparison on the same matches xSP is slightly better (+0.003). The direct model is better than both.</figcaption>
 </figure>
 
-xSP improves on xPass, but only slightly (AUC +0.003). With the stricter definition of keeping the ball, it no longer beats xPass at 3 seconds. A model trained directly on the outcome does better still (+0.018 over xSP at 3 seconds).
+xSP improves on xPass, but only slightly (AUC +0.003). With the stricter definition of keeping the ball, it no longer beats xPass at 3 seconds.
 
-So as a predictor, splitting the pass into two steps doesn't pay. What it adds is an explanation: the direct model can say *how risky* a pass is, but not whether the risk lies in getting the ball there or in keeping it once it arrives. That distinction is what a coach or analyst would act on, and it is the reason to keep the two parts separate.
+What the split adds is an explanation: the direct model can say *how risky* a pass is, but not whether the risk lies in getting the ball there or in keeping it once it arrives. That distinction is what a coach or analyst would act on, and it is the reason to keep the two parts separate.
 
 ## 6. What the model can't see
 
-Some receptions are already a duel when the ball arrives: 1,655 in this data. A quarter of them end in a lost ball by the main definition, and half by the stricter one.
+**On receptions that are already a duel, the model's AUC is 0.51, no better than chance, against 0.84 on ordinary receptions.** Some receptions are already a duel when the ball arrives: 1,655 in this data. A quarter of them end in a lost ball by the main definition, and half by the stricter one.
 
-The model can't tell which. Its AUC on these receptions is 0.51, no better than chance, compared with 0.84 on ordinary receptions. These duels are also where you would expect keeping the ball to matter most, for long balls and crosses in particular. The likely reason is that the tracking data has positions and speeds but not body shape, arm contact or timing of the jump, which is what decides a contested ball.
+The model can't tell which. These duels are also where you would expect keeping the ball to matter most, for long balls and crosses in particular. The likely reason is that the tracking data has positions and speeds but not body shape, arm contact or timing of the jump, which is what decides a contested ball.
 
 ## 7. Summary
 

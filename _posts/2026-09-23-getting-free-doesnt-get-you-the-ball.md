@@ -71,16 +71,16 @@ The defender with the largest $$m_{ij}$$ is the model's answer to "who is markin
 
 Before using the model, I checked it against an independent source. PFF's analysts record, for every first touch, whether the receiver was under pressure and which defender applied it. I compared the model's view a fraction of a second before the ball arrived with the analysts' label.
 
-**xMark agrees with the analysts.** Across 40,388 receptions, $$P_j$$ predicts whether the receiver was pressured with an AUC of **0.83**. A plain "distance to the nearest defender" does about as well (0.83), so for this simple yes-or-no question the physics adds little.
+xMark agrees with the analysts. Across 40,388 receptions, $$P_j$$ predicts whether the receiver was pressured with an AUC of 0.83. A plain "distance to the nearest defender" does about as well (0.83), so for this simple yes-or-no question the physics adds little.
 
-**The model is better at saying *who*.** For the 7,187 receptions where the analysts named the defender who applied pressure:
+**When the model and the nearest-defender rule disagree, the analysts side with the model 43% of the time and with the nearest defender 31% (p < 0.0001).** The model is better at saying *who*. For the 7,187 receptions where the analysts named the defender who applied pressure:
 
 <figure>
   <img src="{{ '/assets/img/coverage/fig_attribution.png' | relative_url }}" alt="Left: the marker-contribution pick matches the labelled presser 68.3% of the time against 66.6% for the nearest defender. Right: when the two disagree, the label sides with the marker-contribution pick 42.6% of the time, the nearest defender 30.9%, neither 26.5%">
   <figcaption>Figure 1. How often each rule names the same defender as PFF's analysts. Right: the 14.5% of cases where the model and the nearest-defender rule disagree. Match-level bootstrap 95% CIs. Shown for the original model; without the turn penalty (Section 3) the match rate is 68.8%.</figcaption>
 </figure>
 
-When the model and the nearest-defender rule pick different defenders, the analysts side with the model 43% of the time and with the nearest defender 31% (p < 0.0001). This suggests the model picks up which of two nearby defenders is moving to engage, not just which one is closer.
+This suggests the model picks up which of two nearby defenders is moving to engage, not just which one is closer.
 
 This check also removed a component. My first version, following Bekkers, added a penalty for defenders running the wrong way. Against the human labels it made both xMark and attribution slightly *worse*, so I dropped it. I re-checked the results below without it on a subset of matches, and none of the conclusions change.
 
@@ -92,7 +92,7 @@ $$
 U(t) = \sum_j V_j \,(1 - P_j)
 $$
 
-If xMark carries information, $$U$$ should predict the next few seconds' shots better than raw threat $$\sum_j V_j$$ with no xMark discount at all. In this data, it didn't. Raw threat did slightly better at every horizon I tested (rank correlation with xG in the next 3 seconds: 0.174 against 0.163), and changing how $$U$$ is aggregated doesn't help.
+**Discounting threat by xMark did not improve prediction: raw threat did slightly better at every horizon I tested (rank correlation with xG in the next 3 seconds: 0.174 against 0.163).** If xMark carries information, $$U$$ should predict the next few seconds' shots better than raw threat $$\sum_j V_j$$ with no xMark discount at all. Changing how $$U$$ is aggregated doesn't help either.
 
 <figure>
   <img src="{{ '/assets/img/marking/fig_pj_distribution.png' | relative_url }}" alt="Histogram of xMark on a log scale, with most mass near zero and a second hump near one">
@@ -101,8 +101,8 @@ If xMark carries information, $$U$$ should predict the next few seconds' shots b
 
 There are two reasons.
 
-- **Most attackers are uncovered most of the time.** The median xMark is 0.09, so the discount $$(1 - P_j)$$ is close to 1 almost everywhere, and $$U$$ is nearly raw threat.
-- **xMark follows danger.** Defenders converge where danger already is, so heavily covered threat goes with *more* xG conceded, not less. This looks like the familiar difficulty of measuring defence from observational data, and I don't expect a better threat model alone to remove it.
+- Most attackers are uncovered most of the time. The median xMark is 0.09, so the discount $$(1 - P_j)$$ is close to 1 almost everywhere, and $$U$$ is nearly raw threat.
+- xMark follows danger. Defenders converge where danger already is, so heavily covered threat goes with *more* xG conceded, not less. This looks like the familiar difficulty of measuring defence from observational data, and I don't expect a better threat model alone to remove it.
 
 ## 5. Use two: does escaping your marker bring the ball?
 
@@ -114,7 +114,7 @@ I compared them with moments where the same player, in the same match, was cover
 |---|---|---|
 | Received a pass within 5 s | 8.6% | 8.2% (p = 0.83) |
 
-Not measurably. An attacker who had just escaped their marker received the ball about as often as one who was still being marked. The result held up under the checks I ran: the separation is real movement rather than a model artefact, passes aren't missing from the data, the ball isn't simply moving away, and wider outcomes (receiving after several passes, the ball getting closer, possession surviving) are equally flat.
+**An attacker who had just escaped their marker received the ball about as often as one who was still marked (8.6% against 8.2%, p = 0.83).** The result held up under the checks I ran: the separation is real movement rather than a model artefact, passes aren't missing from the data, the ball isn't simply moving away, and wider outcomes (receiving after several passes, the ball getting closer, possession surviving) are equally flat.
 
 <figure>
   <img src="{{ '/assets/img/marking/fig_null_result_contrast.png' | relative_url }}" alt="Left: four outcome rates with overlapping confidence intervals for escapes and controls. Right: distance-to-goal distributions, with escapes further from goal">

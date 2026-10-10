@@ -105,7 +105,7 @@ Fabinho arrives from the second line. Collins Fai follows him at first, then los
 
 On video, this is a clean run in behind: Weah gets goal-side of Neco Williams, Pulisic plays him through, and Weah scores first time.
 
-The model sees something else. Weah's xMark falls from 0.96 to 0.58 by the time the pass is played and is still 0.57 when he receives it. When the pass is played, Williams is level with Weah; Weah is faster (7.5 against 6.7 m/s) and gets goal-side while the ball is rolling, so by the time he receives it Williams is about two metres behind, still chasing. The model asks only whether a defender *can reach* the attacker, not whether he is **goal-side** of him, and a defender that close still counts. (For this clip I keep computing Weah's xMark after he receives the ball; normally it stops.)
+**The model misses this run: Weah's xMark is still 0.57 when he receives the ball, because a beaten defender two metres behind still counts as able to reach him.** His xMark falls from 0.96 to 0.58 by the time the pass is played. When the pass is played, Williams is level with Weah; Weah is faster (7.5 against 6.7 m/s) and gets goal-side while the ball is rolling, so by the time he receives it Williams is about two metres behind, still chasing. The model asks only whether a defender *can reach* the attacker, not whether he is goal-side of him. (For this clip I keep computing Weah's xMark after he receives the ball; normally it stops.)
 
 Pitch control doesn't spot it either. Around Weah the background is actually blue: attacking pitch control at his position is 0.24 when the pass is played and 0.25 when he receives it. It also asks who can get there first, and by that measure Williams can.
 
@@ -119,7 +119,7 @@ The two are built from the same pieces. Both estimate how long each player needs
 |---|---|---|
 | Where | Every point on the pitch | Only where each attacker is heading |
 | Who | Attack against defence | Defence only |
-| Breaks down into | Who controls each point | **Who is marking each attacker** |
+| Breaks down into | Who controls each point | Who is marking each attacker |
 
 To see how closely they agree, I took 50,000 random frames of attackers without the ball from all 49 matches and compared an attacker's freedom ($$1 - P_j$$) with attacking pitch control at his position.
 
@@ -130,7 +130,7 @@ To see how closely they agree, I took 50,000 random frames of attackers without 
 | Final third, outside the box | 18,880 | 0.67 [0.65, 0.68] |
 | Inside the penalty area | 2,691 | 0.51 [0.47, 0.55] |
 
-Overall they agree fairly well, but the closer to goal, the less they do. Inside the box, the average attacker is mostly covered (freedom 0.25) while pitch control at his position is roughly even (0.53).
+**The closer to goal, the less xMark and pitch control agree: rank correlation 0.76 overall, but 0.51 inside the penalty area.** Inside the box, the average attacker is mostly covered (freedom 0.25) while pitch control at his position is roughly even (0.53).
 
 The disagreements also go one way. An attacker xMark calls free almost always stands in space his team controls: only 1.3% of all frames are "free but in the defence's space". The reverse is common: more than half of the attackers it calls covered are standing where pitch control favours the attack (9.6% of all frames). That is what you'd expect in crowded areas: a defender is close enough to one attacker to cover him, but other attackers are close enough to the same spot to win a ball played there.
 
