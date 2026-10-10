@@ -5,6 +5,7 @@ subtitle: "Splitting pass success into reaching the receiver and keeping the bal
 description: "Pass completion models stop when the ball arrives. Using PFF FC's 2022 World Cup tracking data, I add a second step: can the receiver keep it? What the split shows, where it doesn't help, and what it can't see."
 math: true
 image: /assets/img/reception/fig_loss_decomposition.png
+thumbnail: /assets/img/reception/fig_loss_decomposition.png
 ---
 
 *52,073 passes · 49 World Cup matches · PFF FC open tracking data*

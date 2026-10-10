@@ -22,6 +22,19 @@ pre { background: var(--code); padding: 12px 14px; overflow-x: auto; border-radi
 img { max-width: 100%; height: auto; display:block; margin: 1.4em auto .3em; background:#fff; border-radius:4px; }
 figure { margin: 1.6em 0; }
 figcaption { color: var(--muted); font-size: 14.5px; line-height:1.5; }
+.intro-block { margin: 0 0 2em; padding-bottom: 1.2em; border-bottom: 1px solid var(--line); }
+.intro-block p { margin: .2em 0; }
+.intro-links { margin-top: .8em !important; font-size: 15px; }
+.intro-links a { margin-right: 16px; text-decoration: none; font-weight: 600; }
+.post-cards { list-style: none; padding: 0; margin: 0; }
+.post-card { display: flex; gap: 18px; align-items: flex-start; margin: 0 0 1.6em; }
+.card-thumb { flex: 0 0 200px; display: block; }
+.card-thumb img { width: 200px; aspect-ratio: 16 / 10; object-fit: contain; margin: 0; background: #fff; border: 1px solid var(--line); border-radius: 6px; }
+.card-thumb img.placeholder { object-fit: cover; }
+.card-body { min-width: 0; }
+.card-title { display: block; font-size: 1.15em; font-weight: 600; line-height: 1.35; text-decoration: none; margin: .1em 0 .3em; }
+.card-summary { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.5; }
+@media (max-width: 560px) { .post-card { flex-direction: column; gap: 8px; } .card-thumb, .card-thumb img { width: 100%; flex-basis: auto; } }
 .post-list { list-style: none; padding: 0; }
 .post-list li { margin: 1.4em 0; }
 .post-list a { font-size: 1.2em; font-weight: 600; text-decoration: none; }

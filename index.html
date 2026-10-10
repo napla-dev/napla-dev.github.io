@@ -2,13 +2,31 @@
 layout: default
 title: Posts
 ---
-<p class="intro">{{ site.description }}</p>
-<ul class="post-list">
+<section class="intro-block">
+  <p>Economics undergraduate at the University of Tokyo.</p>
+  <p>I write about defensive play using tracking data — currently PFF FC’s 2022 World Cup data.</p>
+  <p class="intro-links">
+    <a href="https://github.com/{{ site.github_username }}">GitHub</a>
+    <a href="https://x.com/{{ site.twitter.username }}">X (@{{ site.twitter.username }})</a>
+  </p>
+</section>
+
+<ul class="post-cards">
   {% for post in site.posts %}
-  <li>
-    <span class="meta">{{ post.date | date: "%-d %b %Y" }}</span>
-    <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
-    {% if post.subtitle %}<p class="subtitle">{{ post.subtitle }}</p>{% endif %}
+  {% assign summary = post.summary | default: post.subtitle | default: post.description %}
+  <li class="post-card">
+    <a class="card-thumb" href="{{ post.url | relative_url }}" tabindex="-1" aria-hidden="true">
+      {% if post.thumbnail %}
+      <img src="{{ post.thumbnail | relative_url }}" alt="" loading="lazy">
+      {% else %}
+      <img class="placeholder" src="{{ '/assets/img/placeholder-thumb.svg' | relative_url }}" alt="" loading="lazy">
+      {% endif %}
+    </a>
+    <div class="card-body">
+      <span class="meta">{{ post.date | date: "%-d %b %Y" }}</span>
+      <a class="card-title" href="{{ post.url | relative_url }}">{{ post.title }}</a>
+      {% if summary %}<p class="card-summary">{{ summary }}</p>{% endif %}
+    </div>
   </li>
   {% endfor %}
 </ul>

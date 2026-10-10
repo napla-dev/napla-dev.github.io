@@ -5,6 +5,7 @@ subtitle: "Building a marking model from tracking data, checking it against huma
 description: "xMark, a marking model built on PFF FC's 2022 World Cup tracking data, validated against human-coded pressure labels, then put to three uses. One works; two don't, for instructive reasons."
 math: true
 image: /assets/img/marking/fig_null_result_contrast.png
+thumbnail: /assets/img/marking/fig_null_result_contrast.png
 ---
 
 *49 World Cup matches · 1.02 million frames · updated 2 October 2026*
