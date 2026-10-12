@@ -114,14 +114,14 @@ I compared them with moments where the same player, in the same match, was cover
 |---|---|---|
 | Received a pass within 5 s | 8.6% | 8.2% (p = 0.83) |
 
-**An attacker who had just escaped their marker received the ball about as often as one who was still marked (8.6% against 8.2%, p = 0.83).** The result held up under the checks I ran: the separation is real movement rather than a model artefact, passes aren't missing from the data, the ball isn't simply moving away, and wider outcomes (receiving after several passes, the ball getting closer, possession surviving) are equally flat.
+**An attacker who had just escaped their marker received the ball about as often as one who was still marked (8.6% against 8.2%, p = 0.83).** Controlling for location doesn't change this: comparing within the same distance band (Mantel–Haenszel odds ratio 0.90, 95% CI 0.58–1.38), or against 406 controls matched on lane, box and distance to goal, escaped and still-marked attackers receive the ball equally often (8.9% each). The result held up under the checks I ran: the separation is real movement rather than a model artefact, passes aren't missing from the data, the ball isn't simply moving away, and wider outcomes (receiving after several passes, the ball getting closer, possession surviving) are equally flat.
 
 <figure>
   <img src="{{ '/assets/img/marking/fig_null_result_contrast.png' | relative_url }}" alt="Left: four outcome rates with overlapping confidence intervals for escapes and controls. Right: distance-to-goal distributions, with escapes further from goal">
   <figcaption>Figure 3. Left: what happens next is indistinguishable between escapes and controls. Right: where it happens is not.</figcaption>
 </figure>
 
-The one difference is *where* it happens. Escapes occur a median 25.6 m from goal against 20.0 m for controls, and only 11% happen inside the penalty area against 29% for controls. In other words, escapes mostly happen in areas where being free is less valuable, which may explain why they don't lead to the ball.
+The one difference is *where* it happens. Escapes occur a median 25.6 m from goal against 20.0 m for controls, and only 11% happen inside the penalty area against 29% for controls. But location does not explain the null result: with location held equal, the two groups still receive the ball at the same rate.
 
 ## 6. Summary
 
