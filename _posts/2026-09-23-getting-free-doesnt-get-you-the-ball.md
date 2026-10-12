@@ -13,7 +13,7 @@ thumbnail: /assets/img/marking/fig_null_result_contrast.png
 > **TL;DR**
 > - I built a model of which attacker each defender is covering, which I call **xMark**, from PFF FC's open 2022 World Cup tracking data.
 > - Checked against PFF's human-coded pressure labels, the model agrees with the analysts, and it names the defender who actually pressed the receiver slightly better than a "nearest defender" rule does.
-> - But xMark turned out to be a poor input for predicting danger. And an attacker who escapes their marker is **no more likely to receive the ball** than one who is still marked.
+> - But xMark turned out to be a poor input for predicting danger. And an attacker who escapes their marker is **not detectably more likely to receive the ball** than one who is still marked.
 
 ## 1. The question
 
@@ -69,20 +69,20 @@ The defender with the largest $$m_{ij}$$ is the model's answer to "who is markin
 
 ## 3. Does it measure what it claims?
 
-Before using the model, I checked it against an independent source (as Davis et al., 2024 recommend for sports metrics). PFF's analysts record, for every first touch, whether the receiver was under pressure and which defender applied it. I compared the model's view a fraction of a second before the ball arrived with the analysts' label.
+Before using the model, I checked it against an independent source (as Davis et al., 2024 recommend for sports metrics). PFF's analysts record, for every first touch, whether the receiver was under pressure and which defender applied it. I compared the model's view 0.4 seconds before the ball arrived with the analysts' label.
 
 xMark agrees with the analysts. Across 40,388 receptions, $$P_j$$ predicts whether the receiver was pressured with an AUC of 0.83. A plain "distance to the nearest defender" does about as well (0.83), so for this simple yes-or-no question the physics adds little.
 
-The model is better at saying *who*. For the 7,187 receptions where the analysts named the defender who applied pressure, the model picks the same defender 68.3% of the time, against 66.6% for the nearest defender (Figure 1).
+The model is better at saying *who*. For the 7,187 receptions where the analysts named the defender who applied pressure, the model picks the same defender 68.8% of the time, against 66.6% for the nearest defender (Figure 1).
 
 <figure>
   <img src="{{ '/assets/img/coverage/fig_attribution.png' | relative_url }}" alt="Left: the marker-contribution pick matches the labelled presser 68.3% of the time against 66.6% for the nearest defender. Right: when the two disagree, the label sides with the marker-contribution pick 42.6% of the time, the nearest defender 30.9%, neither 26.5%">
-  <figcaption>Figure 1. How often each rule names the same defender as PFF's analysts. Right: the 14.5% of cases where the model and the nearest-defender rule disagree. Match-level bootstrap 95% CIs. Shown for the original model; without the turn penalty (Section 3) the match rate is 68.8%.</figcaption>
+  <figcaption>Figure 1. How often each rule names the same defender as PFF's analysts. Right: the 14.5% of cases where the model and the nearest-defender rule disagree. Match-level bootstrap 95% CIs. Shown for the original model with the turn penalty (68.3%; in disagreements 42.6% against 30.9%). The text quotes the final model without it (Section 3): 68.8%, and 46.3% against 30.1% in the 13.4% of cases where the two rules disagree.</figcaption>
 </figure>
 
-**When the model and the nearest-defender rule disagree, the analysts side with the model 43% of the time and with the nearest defender 31% (p < 0.0001).** This suggests the model picks up which of two nearby defenders is moving to engage, not just which one is closer.
+**When the model and the nearest-defender rule disagree, the analysts side with the model 46% of the time and with the nearest defender 30% (p < 0.0001).** This suggests the model picks up which of two nearby defenders is moving to engage, not just which one is closer.
 
-This check also removed a component. My first version, following Bekkers, added a penalty for defenders running the wrong way. Against the human labels it made both xMark and attribution slightly *worse*, so I dropped it. I re-checked the results below without it on a subset of matches, and none of the conclusions change.
+This check also removed a component. My first version, following Bekkers, added a penalty for defenders running the wrong way. Against the human labels it made both xMark and attribution slightly *worse*, so I dropped it. I re-checked the results below without it on five matches, and none of the conclusions change.
 
 ## 4. Use one: is uncovered threat more dangerous?
 
@@ -114,7 +114,7 @@ I compared them with moments where the same player, in the same match, was cover
 |---|---|---|
 | Received a pass within 5 s | 8.6% | 8.2% (p = 0.83) |
 
-**An attacker who had just escaped their marker received the ball about as often as one who was still marked (8.6% against 8.2%, p = 0.83).** Controlling for location doesn't change this: comparing within the same distance band (Mantel–Haenszel odds ratio 0.90, 95% CI 0.58–1.38), or against 406 controls matched on lane, box and distance to goal, escaped and still-marked attackers receive the ball equally often (8.9% each). The result held up under the checks I ran: the separation is real movement rather than a model artefact, passes aren't missing from the data, the ball isn't simply moving away, and wider outcomes (receiving after several passes, the ball getting closer, possession surviving) are equally flat.
+**An attacker who had just escaped their marker received the ball about as often as one who was still marked (8.6% against 8.2%, p = 0.83).** Controlling for location doesn't change this: comparing within the same distance band (Mantel–Haenszel odds ratio 0.90, 95% CI 0.58–1.38), or against 406 controls matched to 406 escapes on lane, box and distance to goal, escaped and still-marked attackers receive the ball at the same rate (8.9% each); the interval is wide, so this rules out a large effect rather than any effect. The result held up under the checks I ran: the separation is real movement rather than a model artefact, passes aren't missing from the data, the ball isn't simply moving away, and wider outcomes (receiving after several passes, the ball getting closer, possession surviving) are equally flat.
 
 <figure>
   <img src="{{ '/assets/img/marking/fig_null_result_contrast.png' | relative_url }}" alt="Left: four outcome rates with overlapping confidence intervals for escapes and controls. Right: distance-to-goal distributions, with escapes further from goal">

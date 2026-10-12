@@ -18,13 +18,13 @@ thumbnail: /assets/img/reception/fig_loss_decomposition.png
 
 ## 1. The question
 
-Pass models usually measure success at one moment (e.g. Spearman et al., 2017; Power et al., 2017): did the ball reach a teammate? But a "completed" pass can arrive with a defender on the receiver's back, and the ball can be gone a second later.
+Pass models usually measure success at one moment: did the ball reach a teammate (e.g. Spearman et al., 2017; Power et al., 2017)? But a "completed" pass can arrive with a defender on the receiver's back, and the ball can be gone a second later.
 
 I wanted to measure that second step. Given that a pass arrives, how likely is the receiver to keep the ball, and what does the situation at the moment of the pass tell us about it?
 
 ## 2. Setup
 
-**Data.** PFF FC's open 2022 World Cup data: tracking for 49 matches and the event data, which records each first touch and how each player's spell on the ball ends.
+**Data.** PFF FC's open 2022 World Cup data: tracking for 49 matches and the event data, which records each first touch and how each player's spell on the ball ends. The tracking data has no body orientation, so for the receiver's facing I use a proxy: the direction from the receiver to the passer relative to the attacking direction, grouped as facing goal (under 60°), side-on (60–120°) or back to goal (over 120°).
 
 **What counts as keeping the ball.** A reception counts as *kept* if the receiver's spell ends with a deliberate pass, cross, shot or clearance (whatever happens to it), a foul won, or the team still in possession. It counts as *lost* if the receiver loses a duel, miscontrols the ball, or is dispossessed while carrying it. I also checked a stricter version that counts a pass or clearance given straight to the opponent within 3 seconds as a loss. That raises the failure rate across all receptions from 7% to 17%. The main conclusions hold under both definitions, with one exception noted in Section 5.
 
@@ -34,7 +34,7 @@ I wanted to measure that second step. Given that a pass arrives, how likely is t
 
 For 32,298 ordinary receptions (the receiver controls the ball rather than playing it first time), 5.9% end in a lost ball. Adding tracking features to a baseline feature set improves prediction clearly (AUC 0.76 → 0.85 with gradient boosting, match-level bootstrap interval for the log-loss gain well away from zero), and the predicted probabilities are well calibrated.
 
-The situations most associated with losing the ball are unsurprising, which is consistent with what one would expect:
+The situations most associated with losing the ball are the expected ones:
 
 | Situation at the moment of reception | Loss rate |
 |---|---|
@@ -68,7 +68,7 @@ $$
 Three things stand out:
 
 - Long, lofted passes and crosses are lost mostly before they arrive. The blue part dominates.
-- Short and medium ground passes are different. They rarely fail to arrive.
+- Short and medium ground passes are different. They rarely fail to arrive, so a large share of their losses comes after the ball arrives.
 - In the final third, losses after reaching grow too. The ball arrives in tighter spaces, and keeping it gets harder.
 
 For most groups, the model's total sits close to the observed rate. Long passes, lofted passes and set pieces are overestimated by a few points, and crosses by much more, for the reason given in the caption.
@@ -88,7 +88,7 @@ What the split adds is an explanation: the direct model can say *how risky* a pa
 
 ## 6. What the model can't see
 
-**On receptions that are already a duel, the model's AUC is 0.51, no better than chance, against 0.84 on ordinary receptions.** Some receptions are already a duel when the ball arrives: 1,655 in this data. A quarter of them end in a lost ball by the main definition, and half by the stricter one.
+**On receptions that are already a duel, the model's AUC is 0.51, no better than chance, against 0.84 on ordinary receptions.** (This is xControl, which sees only the moment the pass is played; the 0.85 in Section 3 is the first-touch model, which sees the moment of reception.) Some receptions are already a duel when the ball arrives: 1,655 in this data. A quarter of them end in a lost ball by the main definition, and half by the stricter one.
 
 The model can't tell which. These duels are also where you would expect keeping the ball to matter most, for long balls and crosses in particular. The likely reason is that the tracking data has positions and speeds but not body shape, arm contact or timing of the jump, which is what decides a contested ball.
 

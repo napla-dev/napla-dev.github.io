@@ -53,7 +53,7 @@ In these three scenes, one attacker's run draws a defender away, and a teammate'
   <video src="{{ '/assets/video/offball/01_FRA-POL.mp4' | relative_url }}" autoplay loop muted playsinline style="width:100%"></video>
 </figure>
 
-Giroud and Rabiot both run into the area Kamil Glik is defending. Just before the reference point, Glik's contribution to the two of them is almost equal (about 0.7 each): he is effectively responsible for both at once. The dashed lines cross 0.1 s before the reference point. From there he goes with Rabiot (contribution 0.11 → 0.84) and lets Giroud go (0.82 → 0.38). Giroud's xMark halves, from 0.80 to 0.40. Dembélé's cross finds Giroud, whose shot goes wide.
+Giroud and Rabiot both run into the area Kamil Glik is defending. Just before the reference point, Glik's contribution to the two of them is almost equal (about 0.7 each): he is effectively responsible for both at once. The dashed lines cross 0.1 s before the reference point. From there he goes with Rabiot (contribution 0.11 at 1.9 s before the reference point → 0.84 at 1.2 s after) and lets Giroud go (0.82 at 0.7 s before → 0.38 at 1.1 s after). Giroud's xMark halves, from 0.80 to 0.40. Dembélé's cross finds Giroud, whose shot goes wide.
 
 Whether the two runs were planned together, the data can't say, but the result is a 2-v-1 on a centre-back, who has to choose one of the two.
 
@@ -132,7 +132,7 @@ To see how closely they agree, I took 50,000 random frames of attackers without 
 
 **The closer to goal, the less xMark and pitch control agree: rank correlation 0.76 overall, but 0.51 inside the penalty area.** Inside the box, the average attacker is mostly covered (freedom 0.25) while pitch control at his position is roughly even (0.53).
 
-The disagreements also go one way. An attacker xMark calls free almost always stands in space his team controls: only 1.3% of all frames are "free but in the defence's space". The reverse is common: more than half of the attackers it calls covered are standing where pitch control favours the attack (9.6% of all frames). That is what you'd expect in crowded areas: a defender is close enough to one attacker to cover him, but other attackers are close enough to the same spot to win a ball played there.
+The disagreements also go one way. Here "free" means an xMark of 0.2 or less, and "covered" more than 0.8. An attacker xMark calls free almost always stands in space his team controls: only 1.3% of all frames are "free but in the defence's space". The reverse is common: more than half of the attackers it calls covered are standing where pitch control favours the attack (9.6% of all frames). That is what you'd expect in crowded areas: a defender is close enough to one attacker to cover him, but other attackers are close enough to the same spot to win a ball played there.
 
 So the two are not interchangeable, especially in the box, where most of these scenes happen. xMark is not a better pitch control. Its use is the last row of the table: it says who is marking whom, which a pitch control map doesn't show directly.
 
@@ -143,7 +143,7 @@ I didn't pick these by hand from memory. I searched all 49 matches for two patte
 | Pattern | Per match | Shot within 5 s |
 |---|---|---|
 | A defender switches from one attacker to another, and the first attacker's xMark drops by 0.3 or more within 2 s¹ | 8.5 | 9.1% |
-| An attacker's xMark drops from above 0.5 to below 0.2 within 2 s, at a position worth at least 0.05 xG | 1.1 | 15.4% |
+| An attacker's xMark drops from above 0.5 to below 0.2 within 2 s, at a position worth at least 0.05 xG | 1.1 (52 in total) | 15.4% (8 of 52) |
 | Any moment under the same conditions | — | 5.0% |
 
 ¹ Excluding switches that happen in the same frame as a change of ball carrier (which reshuffles the model's assignments mechanically), and switches where the defender's contribution is below 0.05 before or after.
