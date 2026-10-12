@@ -12,13 +12,13 @@ thumbnail: /assets/img/reception/fig_loss_decomposition.png
 
 > **TL;DR**
 > - I model the two steps separately: the probability that a pass **reaches** its receiver, and the probability that the receiver then **keeps** it.
-> - Multiplying the two (I call it xSP, expected safe pass) splits each lost ball into "lost before reaching" and "lost after reaching". For short and medium ground passes, roughly a third of expected losses come after the ball has arrived.
+> - Multiplying the two (I call it xSP, expected safe pass) splits each lost ball into "lost before reaching" and "lost after reaching". For short and medium ground passes, roughly a third or more of expected losses come after the ball has arrived.
 > - As a pure predictor, the split doesn't win: a model trained directly on "still in possession 3 seconds later" is more accurate. Its value is in showing *where* the ball is lost, not in predicting it better.
-> - Receptions that are already a duel when the ball arrives are lost about half the time within 3 seconds, and my model can't predict which ones.
+> - Receptions that are already a duel when the ball arrives are lost a quarter of the time (half under a stricter definition), and my model can't predict which ones.
 
 ## 1. The question
 
-Pass models usually measure success at one moment: did the ball reach a teammate? But a "completed" pass can arrive with a defender on the receiver's back, and the ball can be gone a second later.
+Pass models usually measure success at one moment (e.g. Spearman et al., 2017; Power et al., 2017): did the ball reach a teammate? But a "completed" pass can arrive with a defender on the receiver's back, and the ball can be gone a second later.
 
 I wanted to measure that second step. Given that a pass arrives, how likely is the receiver to keep the ball, and what does the situation at the moment of the pass tell us about it?
 
@@ -26,7 +26,7 @@ I wanted to measure that second step. Given that a pass arrives, how likely is t
 
 **Data.** PFF FC's open 2022 World Cup data: tracking for 49 matches and the event data, which records each first touch and how each player's spell on the ball ends.
 
-**What counts as keeping the ball.** A reception counts as *kept* if the receiver's spell ends with a deliberate pass, cross, shot or clearance (whatever happens to it), a foul won, or the team still in possession. It counts as *lost* if the receiver loses a duel, miscontrols the ball, or is dispossessed while carrying it. I also checked a stricter version that counts a pass or clearance given straight to the opponent within 3 seconds as a loss. That raises the failure rate from 7% to 17%. The main conclusions hold under both definitions, with one exception noted in Section 5.
+**What counts as keeping the ball.** A reception counts as *kept* if the receiver's spell ends with a deliberate pass, cross, shot or clearance (whatever happens to it), a foul won, or the team still in possession. It counts as *lost* if the receiver loses a duel, miscontrols the ball, or is dispossessed while carrying it. I also checked a stricter version that counts a pass or clearance given straight to the opponent within 3 seconds as a loss. That raises the failure rate across all receptions from 7% to 17%. The main conclusions hold under both definitions, with one exception noted in Section 5.
 
 **One fix worth mentioning.** My first features used velocities from a centred moving average, which quietly included about 0.13 s of the future. I rebuilt every feature from the last frame at least 0.15 s before the event. The results barely moved, but if you build features from smoothed tracking data, this is easy to miss.
 
@@ -34,7 +34,7 @@ I wanted to measure that second step. Given that a pass arrives, how likely is t
 
 For 32,298 ordinary receptions (the receiver controls the ball rather than playing it first time), 5.9% end in a lost ball. Adding tracking features to a baseline feature set improves prediction clearly (AUC 0.76 → 0.85 with gradient boosting, match-level bootstrap interval for the log-loss gain well away from zero), and the predicted probabilities are well calibrated.
 
-The situations most associated with losing the ball are unsurprising, which is reassuring for the model:
+The situations most associated with losing the ball are unsurprising, which is consistent with what one would expect:
 
 | Situation at the moment of reception | Loss rate |
 |---|---|
@@ -84,7 +84,7 @@ For most groups, the model's total sits close to the observed rate. Long passes,
 
 xSP improves on xPass, but only slightly (AUC +0.003). With the stricter definition of keeping the ball, it no longer beats xPass at 3 seconds.
 
-What the split adds is an explanation: the direct model can say *how risky* a pass is, but not whether the risk lies in getting the ball there or in keeping it once it arrives. That distinction is what a coach or analyst would act on, and it is the reason to keep the two parts separate.
+What the split adds is an explanation: the direct model can say *how risky* a pass is, but not whether the risk lies in getting the ball there or in keeping it once it arrives. That distinction may be more useful to an analyst, and it is the reason to keep the two parts separate.
 
 ## 6. What the model can't see
 
@@ -103,3 +103,8 @@ The model can't tell which. These duels are also where you would expect keeping 
 ## Data
 
 PFF FC open 2022 World Cup data (tracking for 49 matches, events for 64). Models: gradient-boosted trees (LightGBM) and logistic regression, with match-grouped cross-validation. All intervals are match-level bootstrap.
+
+## References
+
+- Spearman, W. et al. (2017). Physics-Based Modeling of Pass Probabilities in Soccer. *MIT Sloan Sports Analytics Conference.*
+- Power, P. et al. (2017). Not All Passes Are Created Equal: Objectively Measuring the Risk and Reward of Passes in Soccer from Tracking Data. *KDD.*
